@@ -97,7 +97,7 @@ object Hello {
     model.init()
     model.setListeners(new ScoreIterationListener(100))
     model.fit(trainingData)
-    
+
     val eval : Evaluation = new Evaluation(2)
     val output : INDArray = model.output(trainingData.getFeatureMatrix())
     eval.eval(trainingData.getLabels, output)
