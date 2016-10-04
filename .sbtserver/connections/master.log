@@ -1,0 +1,16 @@
+New log file opened at Mon Oct 03 15:11:33 WIB 2016 by 3954@Stevanuss-MacBook-Pro.local
+Taking next connection to: 64635
+New client attempting to connect on port: 64636-64635
+  Address = /192.168.0.24:64635
+This client on port 64636 has uuid e6ce5dc1-d6e8-4da4-929f-d8cd92951a8c configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-e6ce5dc1-d6e8-4da4-929f-d8cd92951a8c
+Taking next connection to: 64635
+Checking to see if clients are empty...
+We have 1 non-daemon clients, continuing serving connections.
+Taking next connection to: 64635
+Checking to see if clients are empty...
+No non-daemon clients connected after 3 min. Shutting down.
+Server socket thread exiting.
+0 clients open, will close them...
+All client sockets have been closed.
+Closing the 3954@Stevanuss-MacBook-Pro.local logs at Mon Oct 03 15:17:34 WIB 2016, goodbye.
