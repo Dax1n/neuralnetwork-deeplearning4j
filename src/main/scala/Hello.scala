@@ -1,3 +1,5 @@
+import java.io.{File, FileOutputStream}
+
 import org.canova.api.records.reader.RecordReader
 import org.canova.api.records.reader.impl.CSVRecordReader
 import org.canova.api.split.FileSplit
@@ -11,6 +13,7 @@ import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfigurati
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
+import org.deeplearning4j.util.ModelSerializer
 import org.nd4j.linalg.api.ndarray.{BaseNDArray, INDArray}
 import org.nd4j.linalg.dataset.SplitTestAndTrain
 import org.nd4j.linalg.dataset.api.DataSet
@@ -49,7 +52,7 @@ object Hello {
 
     var iterator : DataSetIterator = new RecordReaderDataSetIterator(recordReader, 1000, 24, 2)
     var allData : DataSet = iterator.next()
-    //allData.shuffle()
+    allData.shuffle()
 
     val testAndTrain : SplitTestAndTrain = allData.splitTestAndTrain(0.9)
 
@@ -62,7 +65,7 @@ object Hello {
       .activation("relu")
       .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
       .learningRate(0.1)
-      .momentum(0.5)
+      .momentum(0.9)
       .list()
       .layer(0, new DenseLayer.Builder()
         .nIn(24)
@@ -94,19 +97,30 @@ object Hello {
     model.init()
     model.setListeners(new ScoreIterationListener(100))
     model.fit(trainingData)
-
-    //TEST
-    /*
-    Evaluation eval = new Evaluation(3);
-    INDArray output = model.output(testData.getFeatureMatrix());
-    eval.eval(testData.getLabels(), output);
-    log.info(eval.stats());
-    */
-
+    
     val eval : Evaluation = new Evaluation(2)
-    val output : INDArray = model.output(testData.getFeatureMatrix())
-    eval.eval(testData.getLabels, output)
+    val output : INDArray = model.output(trainingData.getFeatureMatrix())
+    eval.eval(trainingData.getLabels, output)
     println(eval.stats())
+
+    val configuration = model.getLayerWiseConfigurations
+
+    //TEST PRINT MODEL
+    val layers = model.getLayers
+
+    //SAVE MODEL TO FILE
+    val file : FileOutputStream = new FileOutputStream("model.json")
+    ModelSerializer.writeModel(model, file, true)
+    println("MODEL IS READY")
+
+    //LOAD MODEL FROM FILE
+    val loadedNetwork = ModelSerializer.restoreMultiLayerNetwork("model.json")
+
+    if(loadedNetwork.getLayerWiseConfigurations.toJson == model.getLayerWiseConfigurations.toJson) println("arsitektur sama")
+    else println("arsitektur beda")
+
+    if(loadedNetwork.params() == model.params()) println("parameter sama")
+    else println("parameter beda")
 
 
   }
